@@ -9,41 +9,49 @@ import android.widget.TextView
 import android.view.View
 import android.media.MediaPlayer
 import android.provider.MediaStore
+import android.widget.ImageView
+import androidx.core.view.isVisible
+import kotlin.concurrent.timer
 
 class MainActivity : AppCompatActivity() {
-    lateinit var button: Button
     lateinit var countDownTimer: CountDownTimer
     lateinit var textView: TextView
     lateinit var seekBar: SeekBar
+    lateinit var button: Button
+    lateinit var boom: ImageView
     lateinit var mediaPlayer: MediaPlayer
 
     var timerRunning = false
     var currentTime = 0
+    var restart = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // retrieve view elements
         textView = findViewById(R.id.timer)
         seekBar = findViewById(R.id.setTime)
         button = findViewById(R.id.button)
+        boom = findViewById(R.id.boom)
+
         seekBar.max = 600
         seekBar.progress = 300
 
+        // set up media player
         mediaPlayer = MediaPlayer.create(applicationContext,R.raw.explosion)
+
+        // initialize seekbar change listener
         seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
                 update(progress)
-            }
-            //I have to have function headers for these two to be able to compile the program
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-            }
+            } // onProgressChanged
 
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-            }
-        })//seekBar
-    }//onCreate
+            override fun onStartTrackingTouch(p0: SeekBar?) { } // onStartTrackingTouch
 
+            override fun onStopTrackingTouch(p0: SeekBar?) { } // onStopTrackingTouch
+        }) // seekBar
+    } // onCreate
 
     fun update(secLeft : Int) {
         val minutes = secLeft / 60
@@ -51,50 +59,63 @@ class MainActivity : AppCompatActivity() {
         var updatedSeconds = seconds.toString()
         seekBar.progress = secLeft
 
-        //to add placeholding 0 to timer printout if time < 10 sec:
+        // to add place-holding 0 to timer printout if time < 10 sec:
         if (seconds <= 9) {
             updatedSeconds = "0$updatedSeconds"
-        }
-        textView.text = minutes.toString() + ":" +updatedSeconds
-    }//update
-
-    fun reset() {
-        timerRunning = false
-        button.text = "START"
-        textView.text = "5:00"
-        seekBar.progress = 300
-        seekBar.isEnabled = true
-    }//reset
+        } // if
+        textView.text = minutes.toString() + ":" + updatedSeconds
+    } // update
 
     fun start(view: View){
-        //if timer not yet running:
-        if(!timerRunning){
+        // if timer not yet running:
+        if(!timerRunning && !restart){
             timerRunning = true
             button.text = "STOP"
-            currentTime = seekBar.progress*1000+100
+            currentTime = seekBar.progress * 1000 + 100
 
-            //stop user from changing time while timer is running:
+            // stop user from changing time while timer is running:
             seekBar.isEnabled = false
 
-            //create countdown timer object from defined class
+            // create countdown timer object from defined class
             countDownTimer = object : CountDownTimer(currentTime.toLong(), 1000) {
                 override fun onTick(p0: Long){
                     update((p0 / 1000).toInt())
-                }//onTick
+                } // onTick
 
                 override fun onFinish() {
-                    //at finish, play boom sound and restart program
+                    // at finish, play boom sound and restart program
+                    boom.isVisible = true
                     mediaPlayer.start()
-                    reset()
-                }//onFinish
+                    restart()
+                } // onFinish
 
-            }//countDownTimer
+            } // countDownTimer
             countDownTimer.start()
-        }//if
-        //otherwise, cancel and restart program
+        } // if
+        // otherwise, cancel and restart program
+        else if (!timerRunning && restart){
+            boom.isVisible = false
+            reset()
+        } // else-if
         else {
+            timerRunning = false
+            button.text = "CONTINUE"
             countDownTimer.cancel()
-        }//else
-    }//start
+        } //else
+    } //start
 
-}//MainActivity
+    fun restart() {
+        button.text = "RESTART"     // restart screen for timer
+        timerRunning = false
+        restart = true
+    } // restart
+
+    fun reset() {
+        button.text = "START"       // once user chooses to restart, reset timer
+        textView.text = "5:00"
+        seekBar.progress = 300
+        seekBar.isEnabled = true
+        restart = false
+    } // reset
+
+} // MainActivity

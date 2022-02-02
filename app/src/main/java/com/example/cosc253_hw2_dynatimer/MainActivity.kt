@@ -8,10 +8,8 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.view.View
 import android.media.MediaPlayer
-import android.provider.MediaStore
 import android.widget.ImageView
 import androidx.core.view.isVisible
-import kotlin.concurrent.timer
 
 class MainActivity : AppCompatActivity() {
     lateinit var countDownTimer: CountDownTimer
@@ -25,6 +23,12 @@ class MainActivity : AppCompatActivity() {
     var currentTime = 0
     var restart = false
 
+
+    /* =================================================== *
+     *                      onCreate                       *
+     * =================================================== */
+    /* initialize activity and listeners
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         seekBar.max = 600
         seekBar.progress = 300
 
-        // set up media player
+        // set up media player for explosion sound
         mediaPlayer = MediaPlayer.create(applicationContext,R.raw.explosion)
 
         // initialize seekbar change listener
@@ -53,6 +57,12 @@ class MainActivity : AppCompatActivity() {
         }) // seekBar
     } // onCreate
 
+
+    /* =================================================== *
+     *                       update                        *
+     * =================================================== */
+    /* update timer TextView
+     */
     fun update(secLeft : Int) {
         val minutes = secLeft / 60
         val seconds = secLeft - minutes *60
@@ -66,8 +76,13 @@ class MainActivity : AppCompatActivity() {
         textView.text = minutes.toString() + ":" + updatedSeconds
     } // update
 
+    /* =================================================== *
+     *                       start                         *
+     * =================================================== */
+    /* button listener for start/stop/continue/restart
+     */
     fun start(view: View){
-        // if timer not yet running:
+        // if timer is started/resumed
         if(!timerRunning && !restart){
             timerRunning = true
             button.text = "STOP"
@@ -92,11 +107,12 @@ class MainActivity : AppCompatActivity() {
             } // countDownTimer
             countDownTimer.start()
         } // if
-        // otherwise, cancel and restart program
+        // else if timer has completed
         else if (!timerRunning && restart){
             boom.isVisible = false
             reset()
         } // else-if
+        // otherwise, when timer is paused
         else {
             timerRunning = false
             button.text = "CONTINUE"
@@ -104,12 +120,23 @@ class MainActivity : AppCompatActivity() {
         } //else
     } //start
 
+    /* =================================================== *
+     *                      restart                        *
+     * =================================================== */
+    /* update button and vars along w/ BOOM finish
+     */
     fun restart() {
         button.text = "RESTART"     // restart screen for timer
         timerRunning = false
         restart = true
     } // restart
 
+
+    /* =================================================== *
+     *                       reset                         *
+     * =================================================== */
+    /* reset timer to initial state to run again
+     */
     fun reset() {
         button.text = "START"       // once user chooses to restart, reset timer
         textView.text = "5:00"

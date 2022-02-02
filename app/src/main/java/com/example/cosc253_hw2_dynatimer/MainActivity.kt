@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         seekBar.max = 600
         seekBar.progress = 300
 
+        mediaPlayer = MediaPlayer.create(applicationContext,R.raw.explosion)
         seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
                 update(progress)

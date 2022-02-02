@@ -88,11 +88,12 @@ class MainActivity : AppCompatActivity() {
                 }//onFinish
 
             }//countDownTimer
-        }
+            countDownTimer.start()
+        }//if
         //otherwise, cancel and restart program
         else {
             countDownTimer.cancel()
-        }
+        }//else
     }//start
 
 }//MainActivity

@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         seekBar = findViewById(R.id.setTime)
         button = findViewById(R.id.button)
         seekBar.max = 600
-        seekBar.progress = 30
+        seekBar.progress = 300
 
         seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
@@ -36,11 +36,9 @@ class MainActivity : AppCompatActivity() {
             }
             //I have to have function headers for these two to be able to compile the program
             override fun onStartTrackingTouch(p0: SeekBar?) {
-                TODO("Not yet implemented")
             }
 
             override fun onStopTrackingTouch(p0: SeekBar?) {
-                TODO("Not yet implemented")
             }
         })//seekBar
     }//onCreate

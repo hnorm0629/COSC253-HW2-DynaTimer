@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name"><b>DynaTimer</b></string>
-    <string name="start"><b>START</b></string>
-    <string name="startTime"><b>05:00</b></string>
+    <string name="start">START</string>
+    <string name="startTime">5:00</string>
 </resources>
